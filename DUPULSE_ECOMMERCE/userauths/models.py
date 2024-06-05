@@ -13,3 +13,13 @@ class User(AbstractUser):
 
     def _str_(self):
         return self.username
+
+class ContactUs(models.Model):
+    full_name = models.CharField(max_length=200)
+    email = models.CharField(max_length=200)
+    phone = models.CharField(max_length=200) # +234 (456) - 789
+    subject = models.CharField(max_length=200) # +234 (456) - 789
+    message = models.TextField()
+
+    def _str_(self):
+        return self.full_name

@@ -108,6 +108,17 @@
                                                 <a href="#">edit your password and account details.</a>
                                             </p>
                                         </div>
+
+                                        <div>
+                                          <canvas id="myChart"></canvas>
+                                        </div>
+<!--                                        <div>-->
+<!--                                            <canvas style="height: 50px;" id="myChart"></canvas>-->
+<!--                                        </div>-->
+<!--                                        <div class="mt-4">-->
+<!--                                            <p>{{ month }}</p>-->
+<!--                                            <p>{{ total_orders }}</p>-->
+<!--                                        </div>-->
                                     </div>
                                 </div>
                                 <div
@@ -134,7 +145,7 @@
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    {% for o in orders %}
+                                                    {% for o in order_list %}
                                                     <tr>
                                                         <td>INVOICE_NO-{{o.id}}</td>
                                                         <td>{{o.order_date}}</td>
@@ -251,7 +262,7 @@
                                                     <h3 class="mb-0">Address {{forloop.counter}}</h3>
                                                 </div>
 
-                                                <div class="card-body border rounded ">
+                                                <div class="card-body border rounded">
                                                     <address>
                                                         <p>{{ a.address}}</p>
                                                         <p>{{ a.mobile }}</p>
@@ -402,4 +413,28 @@
         </div>
     </div>
 </main>
+<script>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{month|safe}},
+      datasets: [{
+        label: '# of Orders',
+        data: {{total_orders|safe}},
+        backgroundColor: 'rgb(59, 183, 126)',
+        borderColor: 'rgb(59, 183, 126)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
 {% endblock content %}

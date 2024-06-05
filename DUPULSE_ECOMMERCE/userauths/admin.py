@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import User 
+from .models import User, ContactUs
+
 
 # Register your models here.
 
@@ -11,5 +12,14 @@ from .models import User
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ['username', 'email', 'bio']
-    
+
+class ContactUsAdmin(admin.ModelAdmin):
+    list_display = ['full_name', 'email', 'subject']
+
+    class Meta:
+        verbose_name = "Contact Us"
+        verbose_name_plural = "Contact Us"
+
+
 admin.site.register(User, UserAdmin)
+admin.site.register(ContactUs, ContactUsAdmin)

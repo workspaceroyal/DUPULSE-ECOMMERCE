@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Product, Category, Vendor, CartOrder, CartOrderItems, ProductImages, ProductReview, Wishlist, Address
-from django.db.models import Avg
+from django.db.models import Avg, Count
 from django.http import JsonResponse
 from taggit.models import Tag
 from .forms import ProductReviewForm
@@ -14,6 +14,10 @@ from django.contrib.auth.decorators import login_required
 from paypal.standard.forms import PayPalPaymentsForm
 
 from django.core import serializers
+import calendar
+from django.db.models.functions import ExtractMonth
+
+from userauths.models import ContactUs
 
 
 # Create your views here.
@@ -355,8 +359,16 @@ def payment_failed_view(request):
 
 @login_required
 def customer_dashboard(request):
-    orders = CartOrder.objects.filter(user=request.user).order_by("-id")
+    order_list = CartOrder.objects.filter(user=request.user).order_by("-id")
     address = Address.objects.filter(user=request.user)
+
+    orders = CartOrder.objects.annotate(month=ExtractMonth("order_date")).values("month").annotate(count=Count("id")).values("month", "count")
+    month = []
+    total_orders = []
+
+    for i in orders:
+        month.append(calendar.month_name[i["month"]])
+        total_orders.append(i["count"])
 
     if request.method == "POST":
         address = request.POST.get("address")
@@ -372,7 +384,10 @@ def customer_dashboard(request):
         return redirect("core:dashboard")
     context = {
         "orders": orders,
+        "order_list": order_list,
         "address": address,
+        "month": month,
+        "total_orders": total_orders,
     }
     return render(request, 'core/dashboard.html', context)
 
@@ -438,3 +453,37 @@ def remove_wishlist(request):
     wishlist_json = serializers.serialize('json', wishlist)
     t = render_to_string('core/async/wishlist-list.html', context)
     return JsonResponse({"data": t, "W": wishlist_json})
+
+# Other Pages
+def contact(request):
+    return render(request, "core/contact.html")
+
+def ajax_contact_form(request):
+    full_name = request.GET['full_name']
+    email = request.GET['email']
+    phone = request.GET['phone']
+    subject = request.GET['subject']
+    message = request.GET['message']
+    
+    contact = ContactUs.objects.create(
+        full_name=full_name,
+        email=email,
+        phone=phone,
+        subject=subject,
+        message=message,
+    )
+    
+    data = {
+        "bool": True,
+        "message": "Message Sent Successfully"
+    }
+    return JsonResponse({"data":data})
+
+def about_us(request):
+    return render(request, "core/about_us.html")
+def purchase_guide(request):
+    return render(request, "core/purchase_guide.html")
+def privacy_policy(request):
+    return render(request, "core/privacy_policy.html")
+def terms_of_service(request):
+    return render(request, "core/terms_of_service.html")

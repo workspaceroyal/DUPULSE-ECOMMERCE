@@ -3,7 +3,8 @@ from .views import (ajax_add_review, category_list_view, category_product_list_v
                     product_list_view, tag_list, vendor_detail_view, vendor_list_view, search_view, filter_product,
                     add_to_cart, cart_view, delete_item_from_cart, update_cart, checkout_view, payment_completed_view,
                     payment_failed_view, customer_dashboard, order_detail, make_address_default, wishlist_view,
-                    add_to_wishlist, remove_wishlist, )
+                    add_to_wishlist, remove_wishlist, contact, ajax_contact_form, about_us, purchase_guide,
+                    privacy_policy, terms_of_service)
 
 app_name = "core"
 
@@ -77,4 +78,13 @@ urlpatterns = [
 
     # Removing from wishlist
     path("remove-from-wishlist/", remove_wishlist, name="remove-from-wishlist"),
+
+    # Contact Us
+    path("contact/", contact, name="contact"),
+    path("ajax-contact-form/", ajax_contact_form, name="ajax-contact-form"),
+
+    path("about_us/", about_us, name="about_us"),
+    path("purchase_guide/", purchase_guide, name="purchase_guide"),
+    path("privacy_policy/", privacy_policy, name="privacy_policy"),
+    path("terms_of_service/", terms_of_service, name="terms_of_service"),
 ]
